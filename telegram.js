@@ -1,73 +1,68 @@
-export default {
-  key: "telegram_channel",
-  name: "Telegram频道",
-  type: "video", // 类型保持与 Forward 接口一致
+var WidgetMetadata = {
+    id: "telegram_channel",
+    title: "Telegram 频道视频",
+    description: "解析 Telegram 公开频道中的视频内容",
+    author: "Ethan",
+    site: "https://t.me",
+    version: "1.0.0",
+    requiredVersion: "0.0.1",
+    detailCacheDuration: 60,
+    modules: [
+        {
+            title: "抓取频道视频",
+            description: "通过频道名获取 Telegram 中的视频列表",
+            requiresWebView: false,
+            functionName: "fetchTelegramVideos",
+            sectionMode: false,
+            cacheDuration: 3600,
+            params: [
+                {
+                    name: "channel",
+                    title: "频道名",
+                    type: "input",
+                    description: "输入 Telegram 频道名（例如 guochan0101）",
+                    value: "guochan0101"
+                },
+                {
+                    name: "page",
+                    title: "页码",
+                    type: "page",
+                    description: "可选分页参数",
+                    value: 1
+                }
+            ]
+        }
+    ],
+    search: {
+        title: "搜索频道视频",
+        functionName: "fetchTelegramVideos",
+        params: [
+            {
+                name: "channel",
+                title: "频道名",
+                type: "input",
+                description: "输入 Telegram 频道名"
+            }
+        ]
+    }
+};
 
-  // 首页推荐（可选实现）
-  async home(filter) {
-    return [];
-  },
-
-  // 分类接口（可选实现）
-  async category(filter, page = 1) {
-    return {
-      list: [],
-      page: 1,
-      pagecount: 1,
-      limit: 20,
-      total: 0
-    };
-  },
-
-  // 搜索接口（核心）
-  async search(keyword, page = 1) {
-    const url = `https://t.me/s/${keyword}?page=${page}`;
+// 主函数：抓取视频列表
+async function fetchTelegramVideos({ channel, page = 1 }) {
+    const url = `https://t.me/s/${channel}?page=${page}`;
     const html = await req(url);
     const result = [];
 
     const regex = /<video[^>]+src="([^"]+)"[^>]*>/g;
     let match;
     while ((match = regex.exec(html)) !== null) {
-      result.push({
-        name: `Telegram 视频 ${result.length + 1}`,
-        pic: "",
-        remark: "",
-        id: match[1], // 用视频链接作为唯一 id
-      });
+        result.push({
+            name: `视频 ${result.length + 1}`,
+            url: match[1],
+            pic: "",
+            remark: `来自频道 @${channel}`
+        });
     }
 
-    return {
-      list: result,
-      page: page,
-      pagecount: 1,
-      limit: 20,
-      total: result.length
-    };
-  },
-
-  // 详情页接口（用于展示单个视频详情，可省略内容）
-  async detail(id) {
-    return {
-      name: "Telegram 视频",
-      episodes: [
-        {
-          name: "播放",
-          urls: [
-            {
-              name: "高清",
-              url: id
-            }
-          ]
-        }
-      ]
-    };
-  },
-
-  // 播放接口（用于视频解析）
-  async play(url) {
-    return {
-      type: "video",
-      url
-    };
-  }
-};
+    return result;
+}
