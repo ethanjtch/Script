@@ -4,7 +4,7 @@ var widget = {
     description: "播放 Telegram 频道视频",
     version: "1.0.0",
     author: "Ethan",
-    link: "https://t.me/your_channel_name"
+    link: "https://t.me/guochan0101"
   },
   // widget 的主要逻辑
   run: async function (params) {
