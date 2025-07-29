@@ -20,14 +20,12 @@ export default {
         url: videoUrl,
       });
     }
-
     return videoItems;
   },
-
   async play(url) {
     return {
       type: "video",
       url,
     };
   }
-};
+}
