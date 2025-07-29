@@ -1,4 +1,4 @@
-var WidgetMetadata = {
+export const WidgetMetadata = {
     id: "telegram_channel",
     title: "Telegram 频道视频",
     description: "解析 Telegram 公开频道中的视频内容",
@@ -47,8 +47,8 @@ var WidgetMetadata = {
     }
 };
 
-// 主函数：抓取视频列表
-async function fetchTelegramVideos({ channel, page = 1 }) {
+// ✅ 一定要导出这个函数！
+export async function fetchTelegramVideos({ channel, page = 1 }) {
     const url = `https://t.me/s/${channel}?page=${page}`;
     const html = await req(url);
     const result = [];
